@@ -4,7 +4,6 @@
 //
 //  Created by Tamim Khan on 15/2/23.
 //
-
 import UIKit
 
 class ViewController: UITableViewController {
@@ -28,46 +27,60 @@ class ViewController: UITableViewController {
         let filterButton = UIBarButtonItem(title: "Filter", style: .plain, target: self, action: #selector(filterResults))
         
         
-       
+        
         
         navigationItem.leftBarButtonItems = [filterButton]
         
+        performSelector(inBackground: #selector(fatchJSON), with: nil)
         
-        let urlString: String
-        if navigationController?.tabBarItem.tag == 0{
-            
-            urlString = "https://www.hackingwithswift.com/samples/petitions-1.json"
-        }else{
-            urlString = "https://www.hackingwithswift.com/samples/petitions-2.json"
-        }
-        if let url = URL(string: urlString){
-            if let data = try? Data(contentsOf: url){
-                parse(json: data)
-                return
-            }
-            showError()
-            
-            func showError(){
-                let ac = UIAlertController(title: "Loading Error", message: "There is a problem while loading; please check your internet and try later.", preferredStyle: .alert)
-                ac.addAction(UIAlertAction(title: "OK", style: .default))
-                present(ac, animated: true)
-            }
-            
-            func parse(json: Data){
-                let decoder = JSONDecoder()
-                
-                if let jsonPetitions = try? decoder.decode(Petitions.self, from: json){
-                    petitions = jsonPetitions.results
-                    tableView.reloadData()
-                }
-               
-            }
-           
-        }
-        
-       
     }
-   
+        @objc func fatchJSON(){
+            let urlString: String
+            if navigationController?.tabBarItem.tag == 0{
+                
+                urlString = "https://www.hackingwithswift.com/samples/petitions-1.json"
+            }else{
+                urlString = "https://www.hackingwithswift.com/samples/petitions-2.json"
+            }
+                if let url = URL(string: urlString) {
+                    if let data = try? Data(contentsOf: url) {
+                        parse(json: data)
+                        return
+                    }
+                }
+            performSelector(onMainThread: #selector(showError), with: nil, waitUntilDone: false)
+           
+            
+        }
+    
+    
+    
+   @objc func showError(){
+            let ac = UIAlertController(title: "Loading Error", message: "There is a problem while loading; please check your internet and try later.", preferredStyle: .alert)
+            ac.addAction(UIAlertAction(title: "OK", style: .default))
+            present(ac, animated: true)
+        }
+        
+    
+    
+    func parse(json: Data){
+        let decoder = JSONDecoder()
+        
+        if let jsonPetitions = try? decoder.decode(Petitions.self, from: json){
+            petitions = jsonPetitions.results
+            tableView.performSelector(onMainThread: #selector(UITableView.reloadData), with: nil, waitUntilDone: false)
+            }else{
+                performSelector(onMainThread: #selector(showError), with: nil, waitUntilDone: false)
+            }
+        }
+        
+    
+    
+    
+    
+    
+    
+    
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return petitions.count
     }
@@ -75,10 +88,6 @@ class ViewController: UITableViewController {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
-        
-        
-        
-        
         let petition = petitions[indexPath.row]
         cell.textLabel?.text = petition.title
         cell.detailTextLabel?.text = petition.body
@@ -96,22 +105,17 @@ class ViewController: UITableViewController {
         ScoreAlert.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
         present(ScoreAlert, animated: true)
     }
-
+    
     
     
     func filterResultsIn(_ answer: String) {
-        
-        
         var filteredPetitions = [Petition]()
-        
-        
         filteredPetitions = petitions.filter { $0.title.contains(answer) || $0.body.contains(answer)
         }
         
         petitions = filteredPetitions
         tableView.reloadData()
     }
-    
     
     @objc func filterResults() {
         let ac = UIAlertController(title: "Filter Results", message: "Please type your search in below.", preferredStyle: .alert)
@@ -128,8 +132,9 @@ class ViewController: UITableViewController {
         
     }
     
-            
-        }
+}
+        
+        
         
     
 
