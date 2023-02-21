@@ -4,7 +4,6 @@
 //
 //  Created by Tamim Khan on 15/2/23.
 //
-
 import UIKit
 
 class ViewController: UITableViewController {
@@ -32,6 +31,8 @@ class ViewController: UITableViewController {
         
         performSelector(inBackground: #selector(fetchJSON), with: nil)
     }
+        
+        
         
     @objc func fetchJSON(){
         let urlString: String
@@ -119,6 +120,7 @@ class ViewController: UITableViewController {
             else { return }
             self?.performSelector(inBackground: #selector(self?.showPetintion), with: answer)
           
+            
         }
         ac.addAction(submitFilter)
         present(ac, animated: true)
@@ -129,11 +131,7 @@ class ViewController: UITableViewController {
             self.petitions = self.filteredPetitions
             self.tableView.reloadData()
         }
-
     }
 
             
         }
-        
-    
-
