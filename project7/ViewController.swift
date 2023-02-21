@@ -33,8 +33,6 @@ class ViewController: UITableViewController {
         performSelector(inBackground: #selector(fetchJSON), with: nil)
     }
         
-        
-        
     @objc func fetchJSON(){
         let urlString: String
         if navigationController?.tabBarItem.tag == 0{
