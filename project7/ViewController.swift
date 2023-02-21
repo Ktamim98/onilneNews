@@ -121,7 +121,6 @@ class ViewController: UITableViewController {
             else { return }
             self?.performSelector(inBackground: #selector(self?.showPetintion), with: answer)
           
-            
         }
         ac.addAction(submitFilter)
         present(ac, animated: true)
