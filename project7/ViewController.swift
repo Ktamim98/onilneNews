@@ -12,6 +12,7 @@ class ViewController: UITableViewController {
   var petitions = [Petition]()
     
    var filteredPetitions = [Petition]()
+    var originalPetitions = [Petition]()
     
     
     override func viewDidLoad() {
@@ -30,6 +31,7 @@ class ViewController: UITableViewController {
         navigationItem.leftBarButtonItems = [filterButton, resetButton]
         
         performSelector(inBackground: #selector(fetchJSON), with: nil)
+       
     }
         
         
@@ -45,6 +47,7 @@ class ViewController: UITableViewController {
         if let url = URL(string: urlString){
             if let data = try? Data(contentsOf: url){
                 parse(json: data)
+                originalPetitions = petitions
                 return
             }
             performSelector(onMainThread: #selector(showError), with: nil, waitUntilDone: false)
@@ -119,6 +122,7 @@ class ViewController: UITableViewController {
             guard let answer = ac?.textFields?[0].text
             else { return }
             self?.performSelector(inBackground: #selector(self?.showPetintion), with: answer)
+           
           
             
         }
@@ -128,7 +132,7 @@ class ViewController: UITableViewController {
     }
     @objc func resetList() {
         DispatchQueue.main.async {
-            self.petitions = self.filteredPetitions
+            self.petitions = self.originalPetitions
             self.tableView.reloadData()
         }
     }
